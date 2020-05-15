@@ -73,7 +73,7 @@ Ende2: Endzeit MAC (Wenn kein PXE boot)
                 }
                 else
                 {
-                    rdr = new StreamReader(new FileStream(filename, FileMode.Open));
+                    rdr = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
                 }
 
                 Action<string> OnErrorHandler = null;
@@ -146,8 +146,13 @@ Ende2: Endzeit MAC (Wenn kein PXE boot)
         private static void PrintEnd(string mac, DateTime start, DateTime end, string IP, string bootImage)
         {
             TimeSpan duration = end - start;
-            string niceDura = NiceDuration2(duration);
-            Console.WriteLine($"{mac}\t{niceDura,12}\t{IP}\t{bootImage,-12}\t({start} --> {end})");
+            //string niceDura = NiceDuration2(duration);
+            string duraString = MikeDuration(duration);
+
+
+
+            //Console.WriteLine($"{mac}\t{niceDura,12}\t{IP}\t{bootImage,-12}\t{start}");
+            Console.WriteLine($"{mac}\t{duraString,12}\t{IP}\t{bootImage,-12}\t{start}");
         }
 
         private static void HandleEnd(in Dictionary<string, DateTime> sessions, DateTime endTime, string mac, string IP, string bootimage, Action<string> OnError)
@@ -198,6 +203,13 @@ Ende2: Endzeit MAC (Wenn kein PXE boot)
 
             return nice;
         }
+        public static string MikeDuration(in TimeSpan duration)
+        {
+            //return duration.TotalSeconds.ToString("ss.fff");
+            return duration.TotalSeconds.ToString("0.000");
+            //return duration.ToString(@"s\.fff");
+        }
+
         private static DateTime ParseLogTime(string logfiletime)
         {
             try
