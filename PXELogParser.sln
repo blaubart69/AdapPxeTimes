@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PXELogParser", "PXELogParser.csproj", "{ABEE40BF-15E7-4056-A5D3-C6F8F61E9D9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABEE40BF-15E7-4056-A5D3-C6F8F61E9D9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABEE40BF-15E7-4056-A5D3-C6F8F61E9D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABEE40BF-15E7-4056-A5D3-C6F8F61E9D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABEE40BF-15E7-4056-A5D3-C6F8F61E9D9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76D92DF2-466F-4853-AB7F-7C9DB2A27483}
+	EndGlobalSection
+EndGlobal
