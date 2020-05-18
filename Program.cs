@@ -30,20 +30,25 @@ namespace PXELogParser
 
             Dictionary<string, DateTime> sessions = new Dictionary<string, DateTime>(comparer: StringComparer.OrdinalIgnoreCase);
 
-            using (TextWriter errWriter = new StreamWriter(new FileStream("PXELogParser.Error.txt", FileMode.Create, FileAccess.Write)))
+            Action<string> OnErrorHandler;
+            TextWriter errWriter = null;
+            if (String.IsNullOrEmpty(opts.errorFilename))
             {
-                Action<string> OnErrorHandler = errWriter.WriteLine;
-
+                OnErrorHandler = null;
+            }
+            else
+            {
+                errWriter = new StreamWriter(new FileStream(opts.errorFilename, FileMode.Create, FileAccess.Write));
+                OnErrorHandler = errWriter.WriteLine;
+            }
+            using (errWriter)
+            {
                 foreach (string filename in opts.Filenames)
                 {
                     TextReader rdr;
                     if ("-".Equals(filename))
                     {
                         rdr = Console.In;
-                        if (opts.verbose)
-                        {
-                            Console.Error.WriteLine("reading from stdin");
-                        }
                     }
                     else
                     {
