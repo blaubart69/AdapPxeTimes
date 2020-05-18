@@ -30,54 +30,53 @@ namespace PXELogParser
 
             Dictionary<string, DateTime> sessions = new Dictionary<string, DateTime>(comparer: StringComparer.OrdinalIgnoreCase);
 
-            Action<string> OnErrorHandler = null;
-            if (opts.printErrors)
+            using (TextWriter errWriter = new StreamWriter(new FileStream("PXELogParser.Error.txt", FileMode.Create, FileAccess.Write)))
             {
-                OnErrorHandler = Console.Error.WriteLine;
-            }
+                Action<string> OnErrorHandler = errWriter.WriteLine;
 
-            foreach (string filename in opts.Filenames)
-            {
-                TextReader rdr;
-                if ( "-".Equals(filename) )
+                foreach (string filename in opts.Filenames)
                 {
-                    rdr = Console.In;
-                    if (opts.verbose)
+                    TextReader rdr;
+                    if ("-".Equals(filename))
                     {
-                        Console.Error.WriteLine("reading from stdin");
-                    }
-                }
-                else
-                {
-                    rdr = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan));
-                }
-
-                using (rdr)
-                {
-                    string line;
-                    while ((line = rdr.ReadLine()) != null)
-                    {
-                        Match m = one.Match(line);
-                        if ( m.Success )
+                        rdr = Console.In;
+                        if (opts.verbose)
                         {
-                            DateTime logTimestamp = ParseLogTime(m.Groups[1].Value);
+                            Console.Error.WriteLine("reading from stdin");
+                        }
+                    }
+                    else
+                    {
+                        rdr = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan));
+                    }
 
-                            if ( m.Groups[2].Value.StartsWith("Sent") )
+                    using (rdr)
+                    {
+                        string line;
+                        while ((line = rdr.ReadLine()) != null)
+                        {
+                            Match m = one.Match(line);
+                            if (m.Success)
                             {
-                                HandleStart(ref sessions,
-                                    startTime: logTimestamp,
-                                    mac: m.Groups[3].Value,
-                                    OnError: OnErrorHandler);
-                            }
-                            else
-                            {
-                                HandleEnd(
-                                    ref sessions,
-                                    endTime: logTimestamp,
-                                    mac: m.Groups[6].Value,
-                                    IP: m.Groups[7].Value,
-                                    bootimage: "IsAbort".Equals(m.Groups[4].Value) ? "abort" : m.Groups[5].Value,
-                                    OnError: OnErrorHandler);
+                                DateTime logTimestamp = ParseLogTime(m.Groups[1].Value);
+
+                                if (m.Groups[2].Value.StartsWith("Sent"))
+                                {
+                                    HandleStart(ref sessions,
+                                        startTime: logTimestamp,
+                                        mac: m.Groups[3].Value,
+                                        OnError: OnErrorHandler);
+                                }
+                                else
+                                {
+                                    HandleEnd(
+                                        ref sessions,
+                                        endTime: logTimestamp,
+                                        mac: m.Groups[6].Value,
+                                        IP: m.Groups[7].Value,
+                                        bootimage: "IsAbort".Equals(m.Groups[4].Value) ? "abort" : m.Groups[5].Value,
+                                        OnError: OnErrorHandler);
+                                }
                             }
                         }
                     }
@@ -101,14 +100,14 @@ namespace PXELogParser
             }
             else
             {
-                OnError?.Invoke($"E: no START for {mac}");
+                OnError?.Invoke($"{endTime.ToString("yyyy-MM-dd HH:mm:ss,fff")}\t{mac}\tSTART missing");
             }
         }
         private static void HandleStart(ref Dictionary<string, DateTime> sessions, DateTime startTime, string mac, Action<string> OnError)
         {
             if ( sessions.ContainsKey(mac) )
             {
-                OnError?.Invoke($"E: already a START for mac {mac}");
+                OnError?.Invoke($"{startTime.ToString("yyyy-MM-dd HH:mm:ss,fff")}\t{mac}\talready a START");
             }
             else
             {
