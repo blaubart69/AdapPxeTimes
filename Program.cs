@@ -60,6 +60,12 @@ Ende2: Endzeit MAC (Wenn kein PXE boot)
 
             Dictionary<string, DateTime> sessions = new Dictionary<string, DateTime>(comparer: StringComparer.OrdinalIgnoreCase);
 
+            Action<string> OnErrorHandler = null;
+            if (opts.printErrors)
+            {
+                OnErrorHandler = Console.Error.WriteLine;
+            }
+
             foreach (string filename in opts.Filenames)
             {
                 TextReader rdr;
@@ -76,11 +82,6 @@ Ende2: Endzeit MAC (Wenn kein PXE boot)
                     rdr = new StreamReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
                 }
 
-                Action<string> OnErrorHandler = null;
-                if (opts.printErrors)
-                {
-                    OnErrorHandler = Console.Error.WriteLine;
-                }
 
                 using (rdr)
                 {
