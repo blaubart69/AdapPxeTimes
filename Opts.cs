@@ -32,7 +32,7 @@ namespace PXELogParser
             if (showhelp)
             {
                 Console.WriteLine(
-                      "\nusage: PXELogParser [OPTIONS]"
+                      "\nusage: PXELogParser [OPTIONS] [Filenames...]"
                     + "\n\nOptions:");
                 BeeOpts.PrintOptions(cmdOpts);
                 return false;
